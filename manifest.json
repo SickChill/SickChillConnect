@@ -1,7 +1,7 @@
 {
     "name": "__MSG_ext_name__",
     "manifest_version": 2,
-    "version": "0.1.23",
+    "version": "0.1.23.1",
     "permissions": [ "http://*/*", "https://*/*", "tabs", "notifications" ],
     "description": "SickRage extension for Google Chrome.",
     "background": {
@@ -16,8 +16,9 @@
     },
     "content_scripts": [
         {
-            "matches": ["http://trakt.tv/show/*","http://*.trakt.tv/show/*","http://thetvdb.com/*series*","http://*.thetvdb.com/*series*"],
-            "js": ["scripts/SickRageConnect.js"]
+            "matches": ["http://trakt.tv/shows/*","http://*.trakt.tv/shows/*","http://thetvdb.com/*series*","http://*.thetvdb.com/*series*"],
+            "js": ["third_party/jquery/js/jquery-1.6.2.min.js","scripts/SickRageConnect.js"],
+            "run_at": "document_end"
         }
     ],
     "icons": {
@@ -27,10 +28,10 @@
     },
     "web_accessible_resources": [
         "images/icon48.png",
-	    "images/no16.png",
-	    "css/sbconnect_content.css",
-	    "images/bg.gif",
-	    "images/yes16.png",
-	    "images/throbber.svg"
+        "images/no16.png",
+        "css/sbconnect_content.css",
+        "images/bg.gif",
+        "images/yes16.png",
+        "images/throbber.svg"
   ]
 }

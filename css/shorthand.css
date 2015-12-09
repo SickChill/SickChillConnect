@@ -3,7 +3,7 @@
  */
 #menu,.ui-state-default,.ui-widget-content.ui-state-default,.ui-widget-header.ui-state-default,.ui-state-active,.ui-widget-content .ui-state-active,.ui-widget-header .ui-state-active,#tabHeader li,.ui-accordion .ui-accordion-header {
     border-width: 1px;
-    border-color: #57442B;
+    border-color: #15528F;
     border-style: solid;
 }
 
@@ -11,7 +11,7 @@
  * arccordion header
  */ /*normal*/
 .ui-accordion h3.ui-accordion-header {
-    background-color: #57442B;
+    background-color: #15528F;
     color: whitesmoke;
 }
 /* normal hover*/
@@ -22,6 +22,6 @@
 /*active inkl hover*/
 /*if active and active:hover differ the hover state stays during animation this looks strange*/
 .ui-accordion h3.ui-accordion-header.ui-state-active,.ui-accordion h3.ui-state-active:hover {
-    background-color: #c7db39;
-    color: #333;
+    background-color: #297AB8;
+    color: #whitesmoke;
 }

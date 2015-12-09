@@ -105,7 +105,7 @@ function refreshHistory() {
 }
 function refreshMSG() {
     var params = new Params();
-    params.cmd = "sr.getmessages";
+    params.cmd = "sb.getmessages";
     genericRequest(params, msgCallback, null, 0, null); // timeout disabeld
 
 }
@@ -139,16 +139,18 @@ function checkProfileConnections(){
 function msgCallback(response, params) {
     var data = response.data;
     $.each(data, function(k, value) {
-        var notification = webkitNotifications.createNotification('images/icon48.png', // icon url - can be relative
-        value.title, // notification title
-        stripHtmlTags(value.message) // notification body text
-        );
+        var opt = {
+          type: "basic",
+          title: value.title,
+          message: stripHtmlTags(value.message),
+          iconUrl: 'images/icon48.png'
+        };
+        var notification = chrome.notifications.create(opt);
 
-        notification.show();
         // timeout to hide the notifications 0 = always display
         if (settings.getItem("config_notification_timeout") > 0)
             window.setTimeout(function() {
-                notification.cancel();
+                chrome.notifications.clear(notification);
             }, settings.getItem("config_notification_timeout")*1000);
     });
     if (data.length > 0)

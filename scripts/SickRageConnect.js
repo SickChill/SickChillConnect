@@ -4,7 +4,7 @@ var no = chrome.extension.getURL('images/no16.png');
 var yes = chrome.extension.getURL('images/yes16.png');
 var bg = chrome.extension.getURL('images/bg.gif');
 var loading = chrome.extension.getURL('images/throbber.svg');
-
+var current_url = ""
 
 function create() {
     switch (arguments.length) {
@@ -85,8 +85,16 @@ function checkDomain(domain){
 function getCurrentTVDBID(){
     var tvdbid = 0;
 
-    if(checkDomain('trakt'))
-        tvdbid = document.getElementById("meta-tvdb-id").value;
+    if(checkDomain('trakt')) {
+        var n1 = document.body.innerHTML.indexOf("http://thetvdb.com/?id=");
+        if (n1 != -1) {
+            n1 = n1 + 23;
+            var n2 = document.body.innerHTML.indexOf("&amp;tab=series", n1);
+            if (n2 != -1) {
+                tvdbid = document.body.innerHTML.substr(n1,n2-n1);
+            }
+        }
+    }
     else if(checkDomain('thetvdb'))
         tvdbid = get_GET_param('id');
     
@@ -97,7 +105,7 @@ function getCurrentName(){
     var name = "";
 
     if(checkDomain('trakt'))
-        name = document.getElementsByTagName("h2")[0].innerHTML;
+        name = document.getElementsByTagName("h1")[0].innerHTML.replace('<span class="year">','(').replace('</span>',')');
     else if(checkDomain('thetvdb'))
         name = document.getElementsByTagName("h1")[0].innerHTML;
     
@@ -112,126 +120,155 @@ function initGui(){
     var addToText = '<a class="addTo" href="#"></a>';
 
     var close;
-    var popup = create('div', {
-      id : popupId,
-      style: 'background: url("'+bg+'"); display: none;'
-    });
-    var addForm = create('div',{
-        id: 'addForm'
-    });
+
     var curTVDBID = getCurrentTVDBID();
     var curName = getCurrentName();
 
-    chrome.extension.sendRequest({cmd: "own", tvdbid: curTVDBID
-        },function(response) {
-            if(response.result){
+    var element = document.getElementById(popupId);
+    if (element) {
+        element.parentNode.removeChild(element);
+    }
+
+    if (curTVDBID != 0) {
+
+        var popup = create('div', {
+            id: popupId,
+            style: 'background-color: #222; display: none;'
+        });
+        var addForm = create('div', {
+            id: 'addForm'
+        });
+
+        chrome.extension.sendRequest({
+            cmd: "own", tvdbid: curTVDBID
+        }, function (response) {
+            if (response.result) {
                 haveShow = true;
-                popup.style.background = '#C7DB39';
-            }else{
-                popup.style.background = 'url("'+bg+'")';
+                popup.style.background = '#15528F';
+            } else {
+                popup.style.background = 'background-color: #222;';
             }
-    });
-    chrome.extension.sendRequest({activate: "yesORno"},
-        function(response) {
-             if(response.result){
-                 popup.style.display = 'block';
-             }
-         }
-     );
-    addForm.appendChild(create("span",{innerHTML:"Q:"}));
-    addForm.appendChild(_buildSelect('sb_quality',{ 'Default': '',
-                                                    'SD':'sdtv|sddvd',
-                                                    'HD':'hdtv|hdwebdl|hdbluray',
-                                                    'ANY':'sdtv|sddvd|hdtv|hdwebdl|hdbluray|unknown'}));
-    addForm.appendChild(create('br',{}));
-
-    addForm.appendChild(create("span",{innerHTML:"S:"}));
-    addForm.appendChild(_buildSelect('sb_initial_status',{'Default':'',
-                                                        'Wanted':'wanted',
-                                                        'Skipped':'skipped',
-                                                        'Ignored':'ignored',
-                                                        'Archived':'archived'
-    }));
-    addForm.appendChild(create('br',{}));
-    addForm.appendChild(create('input',{
-        type: 'button',
-        value: 'Add',
-        onclick: function(){
-            var curQ = getQ();
-            var curS = getS();
-            addForm.innerHTML = 'Loading <img src="' + loading + '" />';
-            chrome.extension.sendRequest({cmd: "show.addnew",
-                                        tvdbid:curTVDBID,
-                                        quality:curQ,
-                                        status:curS
-                                        },function(response) {
-                                            if(response.result){
-                                                popup.innerHTML = '<img src="' + yes + '" />'+response.name+' was added';
-                                                popup.style.background = '#C7DB39';
-                                            }else{
-                                                popup.innerHTML = 'Could not add the show';
-                                                if(response.msg)
-                                                    popup.innerHTML += ': '+response.msg;
-                                            }
-            });
-        }
-    }));
-
-    var addButton = create('a', {
-        innerHTML: '<img src="' + sb_img_head_url + '" />',
-        id: 'addTo',
-        class: 'sbc',
-        onclick: function(){
-            if(!haveShow){
-                popup.innerHTML = '';
-                popup.appendChild(closeButton);
-                popup.appendChild(addForm);
-                popup.setAttribute("class", "inUse");
+        });
+        chrome.extension.sendRequest({activate: "yesORno"},
+            function (response) {
+                if (response.result) {
+                    popup.style.display = 'block';
+                }
             }
-        }
-    }); //create
-    
-    close = function(){
-        popup.innerHTML = '';
+        );
+        addForm.appendChild(create("span", {class: 'sbc2',innerHTML: "Q:"}));
+        addForm.appendChild(_buildSelect('sb_quality', {
+            'Default': '',
+            'SD': 'sdtv|sddvd',
+            'HD': 'hdtv|hdwebdl|hdbluray',
+            'ANY': 'sdtv|sddvd|hdtv|hdwebdl|hdbluray|unknown'
+        }));
+        addForm.appendChild(create('br', {}));
+
+        addForm.appendChild(create("span", {class: 'sbc2',innerHTML: "S:"}));
+        addForm.appendChild(_buildSelect('sb_initial_status', {
+            'Default': '',
+            'Wanted': 'wanted',
+            'Skipped': 'skipped',
+            'Ignored': 'ignored',
+            'Archived': 'archived'
+        }));
+        addForm.appendChild(create('br', {}));
+        addForm.appendChild(create('input', {
+            type: 'button',
+            value: 'Add',
+            onclick: function () {
+                var curQ = getQ();
+                var curS = getS();
+                addForm.innerHTML = 'Loading <img src="' + loading + '" />';
+                chrome.extension.sendRequest({
+                    cmd: "show.addnew",
+                    tvdbid: curTVDBID,
+                    quality: curQ,
+                    status: curS
+                }, function (response) {
+                    if (response.result) {
+                        popup.innerHTML = '<img src="' + yes + '" />' + response.name + ' was added';
+                        popup.style.background = '#15528F';
+                    } else {
+                        popup.innerHTML = 'Could not add the show';
+                        if (response.msg)
+                            popup.innerHTML += ': ' + response.msg;
+                    }
+                });
+            }
+        }));
+
+        var addButton = create('a', {
+            innerHTML: '<img src="' + sb_img_head_url + '" />',
+            id: 'addTo',
+            class: 'sbc',
+            onclick: function () {
+                if (!haveShow) {
+                    popup.innerHTML = '';
+                    popup.appendChild(closeButton);
+                    popup.appendChild(addForm);
+                    popup.setAttribute("class", "inUse");
+                }
+            }
+        }); //create
+
+        close = function () {
+            popup.innerHTML = '';
+            popup.appendChild(addButton);
+            popup.setAttribute("class", "");
+
+        };
+
+        var closeButton = create('a', {
+            innerHTML: '<img src="' + no + '" />',
+            class: 'closeSBC',
+            onclick: close
+        });
+
+        var fileref = document.createElement("link");
+        fileref.setAttribute("rel", "stylesheet");
+        fileref.setAttribute("type", "text/css");
+        fileref.setAttribute("href", chrome.extension.getURL('css/sbconnect_content.css'));
+        document.getElementsByTagName("head")[0].appendChild(fileref);
         popup.appendChild(addButton);
-        popup.setAttribute("class", "");
-    
-    };
-    
-    var closeButton = create('a', {
-        innerHTML: '<img src="' + no + '" />',
-        class: 'closeSBC',
-        onclick: close
-    });
-
-    var fileref=document.createElement("link");
-    fileref.setAttribute("rel", "stylesheet");
-    fileref.setAttribute("type", "text/css");
-    fileref.setAttribute("href", chrome.extension.getURL('css/sbconnect_content.css'));
-    document.getElementsByTagName("head")[0].appendChild(fileref)
-    popup.appendChild(addButton);
-    document.body.appendChild(popup);
+        document.body.appendChild(popup);
 
 
-    chrome.extension.onRequest.addListener(
-        function(request, sender, sendResponse) {
+        chrome.extension.onRequest.addListener(
+            function (request, sender, sendResponse) {
                 console.log(sender.tab ?
-                        "from a content script:" + sender.tab.url :
-                        "from the extension");
-                if(request.show == "get"){
-                    sendResponse({tvdbid: curTVDBID,
-                                    name: curName});
-                }else if(request.own == "set"){
-                    popup.style.background = '#C7DB39';
+                "from a content script:" + sender.tab.url :
+                    "from the extension");
+                if (request.show == "get") {
+                    sendResponse({
+                        tvdbid: curTVDBID,
+                        name: curName
+                    });
+                } else if (request.own == "set") {
+                    popup.style.background = '#222';
                     haveShow = true;
                 } else
                     sendResponse({}); // snub them.
-    });
-
+            });
+    }
 
 }
 function editShow(){}
 
+function DOMModificationHandler(){
+    $(this).unbind('DOMSubtreeModified.event1');
+    setTimeout(function(){
+        var url = ""+window.location;
+        if (current_url != url) {
+            initGui();
+            current_url = url;
+        }
+        $('body').bind('DOMSubtreeModified.event1',DOMModificationHandler);
+    },1000);
+}
+
 var popupId = 'SickRagec';
 initGui();
-
+//after document-load
+$('body').bind('DOMSubtreeModified.event1',DOMModificationHandler);

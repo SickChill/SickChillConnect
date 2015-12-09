@@ -371,20 +371,20 @@ function futureBuild(response, params) {
             var img = "";
             if(imgType == 'poster'){
                 liHTMLString_ep += '<br /><span class="ep_airs_poster">' + value.airs + '</span>';
-				img = '<img class="future_poster" src="'+constructShowPosterUrl(value.tvdbid)+'"/>';
+                img = '<img class="future_poster" src="'+constructShowPosterUrl(value.tvdbid)+'"/>';
             }else if(imgType == 'banner'){
                 liHTMLString_ep += '<span class="ep_airs_banner">' + value.airs + '</span>';
                 img = '<div style="height:';
-		if(popWidth == 'small'){
-			img += '45px;';
-		}else if(popWidth == 'medium'){
-			img += '63px;';
-		}if(popWidth == 'big'){
-			img += '82px;';
-		}
-		img += 'background-image: url(\''+constructShowBannerUrl(value.tvdbid)+'\');background-size:100%;text-align:right;"><div style="float:right;padding: 5px 5px 5px 5px;">';
-		img += createSearchImg(value.tvdbid, value.season, value.episode, 1);82
-		img += '</div></div>';
+        if(popWidth == 'small'){
+            img += '45px;';
+        }else if(popWidth == 'medium'){
+            img += '63px;';
+        }if(popWidth == 'big'){
+            img += '82px;';
+        }
+        img += 'background-image: url(\''+constructShowBannerUrl(value.tvdbid)+'\');background-size:100%;text-align:right;"><div style="float:right;padding: 5px 5px 5px 5px;">';
+        img += createSearchImg(value.tvdbid, value.season, value.episode, 1);82
+        img += '</div></div>';
             }
 
             if(img)
@@ -398,7 +398,7 @@ function futureBuild(response, params) {
             li.append(liHTMLString_ep);
             if(imgType == "poster") {
                 li.prepend(createSearchImg(value.tvdbid, value.season, value.episode, 2));
-			}
+            }
             curUl.append(li);
             entrys = true;
         });
@@ -499,18 +499,61 @@ function historyBuild(response, params) {
     var filter = settings.getItem("config_history_filter");
     $("#history").html("");
     var ul = $("<ul>");
+    var failedObj = [];
     $.each(data, function(key, value) {
         if(filter == "both" || filter == value.status){
             var li = $("<li>");
+            if (value.quality.indexOf(" HD") != -1) {
+                var HD = "HD"
+            }
+            else if (value.quality.indexOf(" WEB-DL") != -1) {
+                var HD = "HD"
+            }
+            else {
+                var HD = ""
+            }
             var liHTMLString = '<span class="show_name" id="' + value.tvdbid + '">' + value.show_name + '</span>';
             liHTMLString += '<span class="date">' + getNiceHistoryDate(value.date) + '</span><br/>';
             liHTMLString += '<span class="epSeasonEpisode">S' + pad(value.season, 2) + 'E' + pad(value.episode, 2) + '</span>';
             liHTMLString += '<span class="status ' + value.status + '">' + value.status + '</span>';
-            liHTMLString += '<span class="historyQuality">' + value.quality + '</span>';
+            liHTMLString += '<span class="quality ' + HD + value.quality + '">' + value.quality + '</span>';
             li.append(liHTMLString);
             ul.append(li);
         }
-    });
+        else if(filter == "Failed"){
+            var hash = value.tvdbid.toString() + value.season.toString() + value.episode.toString();
+            if (!(hash in failedObj)){
+                failedObj[hash] = {'tvdbid': value.tvdbid,
+                                   'show_name': value.show_name,
+                                   'date': getNiceHistoryDate(value.date),
+                                   'season_episode': 'S' + pad(value.season, 2) + 'E' + pad(value.episode, 2),
+                                   'quality': value.quality,
+                                   'snatched': false,
+                                   'downloaded': false
+                                    }
+            }
+            if(value.status == 'Snatched'){
+                failedObj[hash].snatched = true;
+            }
+            if(value.status == 'Downloaded'){
+                failedObj[hash].downloaded = true;
+            }
+        }
+    });        
+    if(filter == "Failed"){
+        for(item in failedObj){
+            if(failedObj[item].snatched && !(failedObj[item].downloaded)){
+                var li = $("<li>");
+                var liHTMLString = '<span class="show_name" id="' + failedObj[item].tvdbid + '">' + failedObj[item].show_name + '</span>';
+                liHTMLString += '<span class="date">' + failedObj[item].date + '</span><br/>';
+                liHTMLString += '<span class="epSeasonEpisode">' + failedObj[item].season_episode + '</span>';
+                liHTMLString += '<span class="status Failed">Item Not Downloaded</span>';
+                liHTMLString += '<span class="historyQuality">' + failedObj[item].quality + '</span>';
+                li.append(liHTMLString);
+                ul.append(li);
+            }
+        }
+    }
     $("#history").append(ul);
 
     cache.setItem("html_" + params, $("#history").html());
@@ -558,15 +601,15 @@ function searchError(response, params) {
 }
 
 function createSearchImg(tvdbid, season, episode, type) {
-	var img = '<img ';
-	if (type == 1)
-	{
-	img += 'style="background-color: white; padding: 5px 5px 5px 5px;"';
-	}
-	img += 'class="search ' + tvdbid + "-" + season + "-" + episode+ '" id="'+ tvdbid + "-" + season + "-" + episode +'" src="'+chrome.extension.getURL('images/search16.png')+'">';
-	return img;
+    var img = '<img ';
+    if (type == 1)
+    {
+    img += 'style="background-color: white; padding: 5px 5px 5px 5px;"';
+    }
+    img += 'class="search ' + tvdbid + "-" + season + "-" + episode+ '" id="'+ tvdbid + "-" + season + "-" + episode +'" src="'+chrome.extension.getURL('images/search16.png')+'">';
+    return img;
 
-	}
+    }
 /*
  * generic gui helper functions
  */

@@ -21,6 +21,7 @@ body {
     margin: 0;
     padding: 2px;
     width: 351px;
+    background-color: #222;
 }
 
 body.small {
@@ -36,9 +37,9 @@ body.big {
 }
 
 #menu {
-    background: #EFEFEF;
+    background: #333;
     text-align: center;
-    border-top: 1px solid white ! important;
+    border-top: 1px solid white !important;
     border-radius: 0px 0px 4px 4px;
     -webkit-border-bottom-right-radius: 4px;
     -webkit-border-bottom-left-radius: 4px;
@@ -46,7 +47,7 @@ body.big {
 }
 
 #menu span {
-    color: black;
+    color: whitesmoke;
     font-size: 11px;
     line-height: 16px;
     white-space: nowrap;
@@ -59,7 +60,7 @@ body.big {
 }
 
 #menu span:hover,.menu #showActionButton:hover {
-    background-color: #333;
+    background-color: #15528F;
     color: whitesmoke;
 }
 
@@ -119,8 +120,8 @@ body.big {
 }
 
 #tabHeader li:nth-child(2){
-    border-right: solid 1px white ! important;
-    border-left: solid 1px white ! important;
+    border-right: solid 1px #297AB8 ! important;
+    border-left: solid 1px #297AB8 ! important;
 }
 
 .panel {
@@ -311,18 +312,18 @@ img.search.visible,li:hover img.search {
     list-style: none;
     margin: 0px;
     position: relative;
-    border-bottom: solid 1px #fff;
+    border-bottom: solid 1px ##222;
     padding: 4px;
 }
 
 #seasonEpisodes li:nth-child(even),#shows li:nth-child(even),#future-arc li:nth-child(even),#history li:nth-child(even) {
-    background: #EFEFEF;
+    background-color: #333333;
 }
 
 /*
  * quality span
  */
-span.status,span.quality {
+span.status{
     font: bold 1em/1.2em verdana, sans-serif;
     background: none repeat scroll 0 0 #999999;
     color: #FFFFFF;
@@ -335,21 +336,95 @@ span.status,span.quality {
     float: right;
 }
 
+span.quality {
+    font: 12px/13px "Open Sans", verdana, sans-serif;
+    background-image:-webkit-linear-gradient(top, rgba(255,255,255,0.08),rgba(255,255,255,0) 50%,rgba(0,0,0,0) 50%,rgba(0,0,0,0.25));
+    background-image:-moz-linear-gradient(top, rgba(255,255,255,0.08),rgba(255,255,255,0) 50%,rgba(0,0,0,0) 50%,rgba(0,0,0,0.25));
+    background-image:-o-linear-gradient(top, rgba(255,255,255,0.08),rgba(255,255,255,0) 50%,rgba(0,0,0,0) 50%,rgba(0,0,0,0.25));
+    background-image:linear-gradient(to bottom, rgba(255,255,255,0.08),rgba(255,255,255,0) 50%,rgba(0,0,0,0) 50%,rgba(0,0,0,0.25));
+    -webkit-box-shadow:inset 0 1px rgba(255,255,255,0.1),inset 0 -1px 3px rgba(0,0,0,0.3),inset 0 0 0 1px rgba(255,255,255,0.08),0 1px 2px rgba(0,0,0,0.15);
+    box-shadow:inset 0 1px rgba(255,255,255,0.1),inset 0 -1px 3px rgba(0,0,0,0.3),inset 0 0 0 1px rgba(255,255,255,0.08),0 1px 2px rgba(0,0,0,0.15);
+    text-shadow: 0px 1px rgba(0, 0, 0, 0.8);
+    color: #FFFFFF;
+    display: inline-block;
+    padding: 2px 4px;
+    text-align: center;
+    vertical-align: baseline;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    white-space: nowrap;
+     float: right;
+}
+
+span.any-hd {
+    background-color: #2672b6;
+    background: repeating-linear-gradient(
+        -45deg,
+        #2672b6,
+        #2672b6 10px,
+        #5b990d 10px,
+        #5b990d 20px
+    );
+}
+
 span.Custom {
-    background: none repeat scroll 0 0 #444499; /* blue */
+    background-color: #621993;
 }
 
 span.HD {
-    background: none repeat scroll 0 0 #449944; /* green */
+    background-color: #2672B6;
+}
+
+/* span.HDTV {
+    background-color: #2672B6;
+} */
+
+span.HD720p {
+    background-color: #5b990d ! important;
+}
+
+span.HD1080p {
+    background-color: #2672B6 ! important;
+}
+
+span.RawHD {
+    background-color: #cd7300;
+}
+
+span.RawHDTV {
+    background-color: #cd7300;
 }
 
 span.SD {
-    background: none repeat scroll 0 0 #994444; /* red */
+    background-color: #BE2625;
+}
+
+span.SDTV {
+    background-color: #BE2625;
+}
+
+span.SDDVD {
+    background-color: #BE2625; 
 }
 
 span.Any {
-    background: none repeat scroll 0 0 #444444; /* black */
+    background-color: #666;
 }
+
+span.Unknown {
+    background-color: #999;
+}
+
+span.Proper {
+    background-color: #3F7F00;
+}
+
+span.false {
+    color: #993333;
+    /* red */
+}
+
 
 /*
  * quality span
@@ -360,24 +435,32 @@ span.status {
 }
 
 span.Wanted {
-    background: #FFB0B0;
+    background: #ffb0b0;
 }
 
 span.Ignored {
-    background: #BEDEED;
+    background: #bedeed;
 }
 
 span.Snatched {
-    background: #444499;
-    color: whitesmoke;
+    background: #ebc1ea;
 }
 
 span.Downloaded {
-    background: #C3E3C8;
+    background: #c3e3c8;
 }
 
-.status.Unaired,span.Skipped {
-    color: whiteSmoke;
+span.Failed {
+    background: #FF0000;
+    color: whitesmoke;
+}
+
+span.Skipped {
+    background: #1d5068;
+}
+
+.status.Unaired {
+    background: #f5f1e4;
 }
 
 /*
