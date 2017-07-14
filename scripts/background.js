@@ -33,7 +33,7 @@ chrome.extension.onRequest.addListener(
               succescallback = function(data,param){
                   if(data['data'])
                       data = data['data'];
-                  
+
                   var showList = {};
                   $.each(data, function(name, show) {
                       showList[show.tvdbid] = name;
@@ -167,7 +167,7 @@ function setBadge(response, params) {
         chrome.browserAction.setBadgeBackgroundColor( { color : [ 255, 0, 0, 100 ] });
     } else if (data.today.length > 0 && mode != "missed") {
         chrome.browserAction.setBadgeText( { text : "" + data.today.length });
-        chrome.browserAction.setBadgeBackgroundColor( { color : [ 0, 255, 0, 100 ] });
+        chrome.browserAction.setBadgeBackgroundColor( { color : [ 0, 163, 0, 100 ] });
     } else {
         chrome.browserAction.setBadgeText( { text : "" });
     }
@@ -216,12 +216,12 @@ function checkProfileTestDone(){
     var allProfiles = profiles.getAll();
     var toCompare = [];
     var testsNotDone = false;
-    
+
     $.each(allProfiles, function(name, values) {
         if(values.profile_priority){
             if(!connectionStatusProfile.hasOwnProperty(name)){
                 testsNotDone = true;
-                return false;   
+                return false;
             }
             values.name = name;
             values.connectionStatus = connectionStatusProfile[name];
@@ -230,7 +230,7 @@ function checkProfileTestDone(){
     });
     if(testsNotDone)
         return false;
-    
+
     var sorted = toCompare.sort(profileCompare);
     console.log("sorted list",sorted)
     $.each(sorted, function(index, curP) {
@@ -264,14 +264,14 @@ function reloadBackgroundPage() {
 
 function switchProfile(profileName){
     profile = profiles.getProfile(profileName);
-    
+
     settings.setItem('profile_name', profile.name);
-    
+
     settings.setItem('sb_url', profile.values.sb_url);
     settings.setItem('sb_api_key', profile.values.sb_api_key);
     settings.setItem('sb_username', profile.values.sb_username);
     settings.setItem('sb_password', profile.values.sb_password);
-    
+
     cache.clear();
     age.clear();
 }
@@ -279,7 +279,7 @@ function switchProfile(profileName){
 function migration(){
 
     console.log("migration: init check");
-    
+
     var migrationLvl = settings.getItem('migration');
     if(typeof migrationLvl === undefined){
         settings.setItem('migration', 0);
